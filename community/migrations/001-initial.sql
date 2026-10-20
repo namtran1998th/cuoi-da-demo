@@ -1,0 +1,12 @@
+CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,nickname TEXT NOT NULL,password_hash TEXT NOT NULL,created_at INTEGER NOT NULL);
+CREATE TABLE sessions(token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),expires_at INTEGER NOT NULL);
+CREATE INDEX sessions_user ON sessions(user_id);
+CREATE TABLE posts(id TEXT PRIMARY KEY,author_id TEXT NOT NULL REFERENCES users(id),title TEXT NOT NULL,topic TEXT NOT NULL,media_key TEXT UNIQUE NOT NULL,media_type TEXT NOT NULL,size INTEGER NOT NULL,created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,status TEXT NOT NULL CHECK(status IN ('pending','ready','deleted')));
+CREATE INDEX posts_author ON posts(author_id,created_at);
+CREATE INDEX posts_status ON posts(status,created_at);
+CREATE TABLE likes(user_id TEXT NOT NULL REFERENCES users(id),post_id TEXT NOT NULL REFERENCES posts(id),first_liked_at INTEGER NOT NULL,active INTEGER NOT NULL CHECK(active IN (0,1)),PRIMARY KEY(user_id,post_id));
+CREATE INDEX likes_post ON likes(post_id,active,first_liked_at);
+CREATE TABLE comments(id TEXT PRIMARY KEY,post_id TEXT NOT NULL REFERENCES posts(id),author_id TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL,created_at INTEGER NOT NULL);
+CREATE INDEX comments_post ON comments(post_id,created_at);
+CREATE TABLE bookmarks(user_id TEXT NOT NULL REFERENCES users(id),post_id TEXT NOT NULL REFERENCES posts(id),PRIMARY KEY(user_id,post_id));
+CREATE TABLE rate_limits(key TEXT PRIMARY KEY,count INTEGER NOT NULL,expires_at INTEGER NOT NULL);

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cười Đã — Cộng đồng</title>
+    <meta
+      name="description"
+      content="Một chút vui mỗi ngày. Đăng ảnh, video và cùng bình chọn cây hài của tuần."
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/" data-nav class="brand"
+          >cười đã<span class="brand-face">☺</span><i>.</i></a
+        ><span class="tagline">Một chút vui, mỗi ngày.</span
+        ><label class="search"
+          ><span>⌕</span
+          ><input
+            id="search"
+            type="search"
+            maxlength="180"
+            placeholder="Tìm một chút niềm vui…"
+            aria-label="Tìm bài viết" /></label
+        ><button class="primary" id="upload">＋ Đăng bài</button
+        ><button id="account-button" class="account-button">Đăng nhập</button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="left">
+        <div class="eyebrow">GÓC CỦA BẠN</div>
+        <nav aria-label="Khám phá">
+          <a class="nav-item" data-nav href="/?tab=hot">♨ Đang hot</a
+          ><a class="nav-item" data-nav href="/?tab=new">◷ Mới tinh</a
+          ><a class="nav-item" data-nav href="/?tab=top">♕ Top tiếng cười</a
+          ><a class="nav-item" data-nav href="/saved">▱ Đã lưu</a
+          ><a class="nav-item" data-nav href="/me/posts">◎ Bài của tôi</a
+          ><a class="nav-item" data-nav href="/leaderboard"
+            >♕ Cây hài của tuần</a
+          >
+        </nav>
+        <div class="divider"></div>
+        <div class="eyebrow">LƯỚT THEO GU</div>
+        <div class="topics">
+          <a data-nav href="/?topic=Đời%20thường">☕ Đời thường</a
+          ><a data-nav href="/?topic=Mèo%20%26%20đồng%20bọn">ฅ Mèo & đồng bọn</a
+          ><a data-nav href="/?topic=Chuyện%20đi%20làm">▣ Chuyện đi làm</a
+          ><a data-nav href="/?topic=Học%20đường">✎ Học đường</a>
+        </div>
+        <div class="left-note">
+          <span class="small-face">☺</span
+          ><strong>Đời hơi căng?<br />Cười một cái đã.</strong>
+          <p>Một chiếc meme hay<br />có thể cứu cả ngày buồn.</p>
+        </div>
+      </aside>
+      <main>
+        <section class="welcome">
+          <div>
+            <div class="eyebrow">CHÀO MỪNG VỀ VỚI GÓC VUI</div>
+            <h1>Hôm nay, bạn cười chưa?</h1>
+            <p>Chuyện vui của bạn, tiếng cười của mọi người.</p>
+            <span class="welcome-pill"><i></i> Cộng đồng cùng tần số</span>
+          </div>
+          <div class="hero-face" aria-hidden="true">
+            <span>⌒ ⌒</span><b>◡</b><i>✦</i>
+          </div>
+        </section>
+        <div class="feed-heading">
+          <div>
+            <h2 id="feed-title">Đang hot</h2>
+            <span id="feed-description">Một chút vui, mỗi ngày.</span>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="Bảng tin">
+          <a data-nav href="/?tab=hot">♨ Hot</a
+          ><a data-nav href="/?tab=new">◷ Mới</a
+          ><a data-nav href="/?tab=top">♕ Top</a
+          ><a data-nav href="/saved">▱ Đã lưu</a
+          ><a data-nav href="/me/posts">Bài của tôi</a>
+        </nav>
+        <div id="feed" aria-live="polite"></div>
+        <button id="load-more" hidden>Xem thêm bài</button>
+      </main>
+      <aside class="right">
+        <section class="community">
+          <span class="eyebrow">INTERNET VUI HƠN KHI CÓ BẠN</span>
+          <h2>Chỗ này thiếu<br />mỗi bạn thôi.</h2>
+          <p>
+            Đăng ảnh hoặc video. Góp một câu chuyện.<br />Cùng nhau làm ngày bớt
+            nhạt.
+          </p>
+          <button id="join-upload">Góp một tiếng cười ↗</button>
+        </section>
+        <section class="side-card">
+          <h3>Cây hài của tuần ♕</h3>
+          <div id="ranking">Đang tải bảng xếp hạng…</div>
+          <a class="more-link" data-nav href="/leaderboard"
+            >Xem toàn bộ bảng xếp hạng ↗</a
+          >
+          <p class="demo-caption">
+            Tính lượt thích hợp lệ trong tuần, theo giờ Việt Nam.
+          </p>
+        </section>
+        <div class="kind-note">
+          ✳
+          <span
+            >Vui thôi, đừng làm ai buồn nhé.<br /><small
+              >Một cộng đồng tử tế bắt đầu từ bạn.</small
+            ></span
+          >
+        </div>
+      </aside>
+    </div>
+    <dialog id="account-dialog" aria-labelledby="account-title">
+      <form id="account-form">
+        <div class="dialog-title">
+          <h2 id="account-title">Đăng nhập</h2>
+          <button class="close" type="button" aria-label="Đóng">×</button>
+        </div>
+        <p id="account-note">Chào bạn, lại gặp nhau ở góc vui!</p>
+        <label id="email-field"
+          >Email<input
+            name="email"
+            type="email"
+            autocomplete="email"
+            maxlength="254"
+            required /></label
+        ><label id="nickname-field" hidden
+          >Biệt danh<input
+            name="nickname"
+            minlength="2"
+            maxlength="40"
+            autocomplete="nickname" /></label
+        ><label id="current-field" hidden
+          >Mật khẩu hiện tại<input
+            name="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            minlength="12"
+            maxlength="128" /></label
+        ><label
+          >Mật khẩu<input
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            minlength="12"
+            maxlength="128"
+            required
+        /></label>
+        <p class="form-error" id="account-error" role="alert"></p>
+        <button id="account-submit" class="primary">Đăng nhập</button
+        ><button id="account-switch" type="button" class="text-button">
+          Tạo tài khoản</button
+        ><button id="logout" type="button" class="text-button" hidden>
+          Đăng xuất
+        </button>
+      </form>
+    </dialog>
+    <dialog id="post-dialog" aria-labelledby="post-title">
+      <form id="post-form">
+        <div class="dialog-title">
+          <h2 id="post-title">Góp một tiếng cười</h2>
+          <button class="close" type="button" aria-label="Đóng">×</button>
+        </div>
+        <label
+          >Tiêu đề<input
+            name="title"
+            maxlength="180"
+            required
+            placeholder="Chuyện vui hôm nay là gì?" /></label
+        ><label
+          >Chủ đề<select name="topic">
+            <option>Đời thường</option>
+            <option>Mèo & đồng bọn</option>
+            <option>Chuyện đi làm</option>
+            <option>Học đường</option>
+          </select></label
+        ><label id="media-field" class="file-label"
+          >Ảnh hoặc video<input
+            name="media"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm"
+          /><small>Ảnh tối đa 2 MB · Video MP4/WebM tối đa 50 MB</small></label
+        >
+        <div id="media-preview"></div>
+        <progress
+          id="upload-progress"
+          max="100"
+          value="0"
+          hidden
+          aria-label="Tiến trình tải lên"
+        ></progress>
+        <p id="post-error" class="form-error" role="alert"></p>
+        <button id="post-submit" class="primary">Đăng bài</button>
+      </form>
+    </dialog>
+    <dialog id="share-dialog" aria-labelledby="share-title">
+      <div class="dialog-title">
+        <h2 id="share-title">Chia sẻ tiếng cười</h2>
+        <button class="close" type="button" aria-label="Đóng">×</button>
+      </div>
+      <label>Liên kết bài viết<input id="share-link" readonly /></label>
+      <p>Người nhận cần truy cập được địa chỉ máy chủ này.</p>
+      <div class="share-options">
+        <button id="copy-share" class="primary">Sao chép liên kết</button
+        ><button id="native-share">Chọn ứng dụng…</button>
+      </div>
+    </dialog>
+    <div id="toast" role="status"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

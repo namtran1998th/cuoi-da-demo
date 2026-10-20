@@ -23,3 +23,21 @@ Mở http://localhost:4173. Trên Windows có thể dùng `py -3 -m http.server 
 Để chạy kiểm thử tự động, cài Google Chrome, Node.js rồi chạy `npm install` và `npm test` khi máy chủ đang mở.
 
 Bản demo đã triển khai: https://cuoi-da-demo-p7.marketing-tn-1396.chatgpt.site (riêng tư).
+
+## Bản cộng đồng có tài khoản
+
+Bản máy chủ mới nằm trong [community](community/README.md): đăng ký/đăng nhập email và mật khẩu, đăng ảnh/video theo tài khoản, sửa/xóa bài của chính chủ, bình luận, lưu bài, lượt thích và bảng xếp hạng Cây hài của tuần theo giờ Việt Nam. Dữ liệu dùng SQLite và thư mục uploads trên máy chủ.
+
+Cài Node.js 24 LTS, chạy:
+
+```sh
+cd community
+npm ci
+npm start
+```
+
+Mở http://localhost:4174 để tạo tài khoản. Xem hướng dẫn cấu hình, sao lưu và khôi phục trong [community/README.md](community/README.md).
+
+**GitHub Pages vẫn phục vụ bản demo tĩnh ở thư mục gốc.** Tài khoản và dữ liệu dùng chung cần chạy bản community trên máy chủ Node.js có ổ đĩa bền vững; GitHub Pages không chạy được backend này. Không đưa database, tệp người dùng hoặc `.env` lên GitHub.
+
+Kiểm tra bản community: 13 bài kiểm thử API/dữ liệu và kiểm thử trình duyệt hai tài khoản (video, lượt thích, xếp hạng, khởi động lại, giao diện mobile/desktop) đã đạt.

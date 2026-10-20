@@ -1,0 +1,24 @@
+{
+  "name": "cuoi-da-community",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "test": "node --test test/*.test.mjs",
+    "test:browser": "node test/browser.cjs",
+    "backup": "node scripts/backup.mjs"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "ffprobe-static": "3.1.0",
+    "multer": "2.4.0",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
