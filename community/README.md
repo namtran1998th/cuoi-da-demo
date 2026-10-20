@@ -22,7 +22,7 @@ Mỗi tài khoản có email đăng nhập, biệt danh công khai và mật kh�
 - `data/community.sqlite`: tài khoản, phiên, bài viết, tương tác và giới hạn tốc độ.
 - `data/uploads/`: ảnh/video đã kiểm tra; `data/tmp/`: tệp đang tải.
 - Các đường dẫn này và `.env` được Git bỏ qua. Không đưa tệp người dùng, cơ sở dữ liệu hoặc bí mật lên GitHub.
-- Chỉ chạy **một process** trên một thư mục data. `server.lock` ngăn chạy trùng và khóa khi sao lưu. Nếu process bị tắt cưỡng bức, xác nhận không còn server dùng thư mục đó rồi mới xóa file khóa. Khởi động lại sẽ dọn tệp tạm/bài chưa hoàn tất.
+- Chỉ chạy **một process** trên một thư mục data. `process-lock.sqlite` dùng khóa hệ điều hành để ngăn chạy trùng và khóa khi sao lưu; khóa tự nhả nếu process chết. Không xóa tệp process-lock.sqlite. Khi nâng cấp từ bản cũ, dừng server cũ trước rồi mới xóa marker `server.lock` còn sót. Khởi động lại sẽ dọn tệp tạm/bài chưa hoàn tất.
 - Node lắng nghe `127.0.0.1` để triển khai sau reverse proxy. Dùng ổ đĩa bền vững; không triển khai trên filesystem tạm thời/serverless.
 - FFprobe được đi kèm qua `ffprobe-static`; có thể đặt `FFPROBE_PATH` để dùng bản hệ thống cập nhật. MP4/WebM vẫn cần codec mà trình duyệt hỗ trợ, server không chuyển mã video.
 
@@ -56,4 +56,22 @@ npm run test:browser
 Kiểm thử trình duyệt dùng Google Chrome, tự mở máy chủ tạm ở cổng 4176, hai phiên độc lập và dữ liệu tạm. Có kiểm tra đăng video, lượt thích, xếp hạng và dữ liệu còn sau khi khởi động lại server. Ảnh chụp kiểm tra nằm trong `test-output/` và không được đưa lên Git. Video fixture `test/fixtures/flower.webm` là CC0 từ MDN: https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm.
 
 Tham chiếu mật khẩu: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html — scrypt N=131072, r=8, p=1, tối đa 2 phép băm chạy đồng thời. Giới hạn theo IP dùng IP trực tiếp mặc định; cấu hình proxy sai sẽ khiến giới hạn áp dụng chung cho mọi người hoặc có thể bị vượt qua.
+
+
+
+## Chạy nền bằng PM2 trên Windows
+
+```powershell
+npm install -g pm2
+cd D:\IT\VibeCoding\Project7\community
+pm2 start ecosystem.config.cjs
+pm2 save
+pm2 status
+```
+
+Dừng bản `npm start` trước khi chuyển sang PM2. Nếu đang nâng cấp từ bản cũ và đã xác nhận server cũ dừng, xóa `data/server.lock` một lần. PM2 dùng một instance, gửi thông điệp shutdown để đóng SQLite an toàn trên Windows, và tự thử chạy lại sau lỗi. Nếu khởi động thất bại liên tục 10 lần, kiểm tra log và sửa nguyên nhân trước khi chạy lại.
+
+Lệnh thường dùng: `pm2 logs haivl --lines 50`, `pm2 restart haivl`, `pm2 stop haivl`. Dừng `haivl` trước khi sao lưu, rồi chạy `pm2 start haivl` sau khi sao lưu xong.
+
+`pm2 save` chỉ lưu danh sách ứng dụng. Windows cần Task Scheduler gọi `pm2 resurrect` khi đăng nhập để tự khôi phục. Máy triển khai hiện tại dùng task `CuoiDa-PM2-Logon` chạy theo tài khoản Windows hiện tại; task gọi `pm2 start ecosystem.config.cjs --only haivl` để chỉ quản lý ứng dụng này. Đây là khởi động sau đăng nhập, không phải Windows Service chạy trước đăng nhập. Máy phải bật, có mạng và không sleep; dịch vụ Cloudflared cũng phải hoạt động.
 

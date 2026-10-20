@@ -2,15 +2,13 @@ import {
   mkdirSync,
   accessSync,
   constants,
-  closeSync,
-  openSync,
-  unlinkSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { openDatabase } from "./db.mjs";
 import { createApp } from "./app.mjs";
 import { probePath } from "./media.mjs";
+import { acquireProcessLock } from "./process-lock.mjs";
 if (Number(process.versions.node.split(".")[0]) !== 24)
   throw Error("Use Node.js 24 LTS.");
 const port = Number(process.env.PORT || 4174),
@@ -30,15 +28,7 @@ execFileSync(probePath, ["-version"], { stdio: "ignore", windowsHide: true });
 mkdirSync(dataDir, { recursive: true });
 accessSync(dataDir, constants.W_OK);
 // One process owns the media directory; startup reconciliation must never race another worker.
-const lock = join(dataDir, "server.lock");
-let lockFd;
-try {
-  lockFd = openSync(lock, "wx");
-} catch {
-  throw Error(
-    "Data directory is locked. Stop the other server; after a crash verify its PID is gone before removing data/server.lock.",
-  );
-}
+const releaseLock = acquireProcessLock(dataDir);
 const db = openDatabase(join(dataDir, "community.sqlite"));
 const app = createApp({
   db,
@@ -47,17 +37,17 @@ const app = createApp({
   secureCookies: parsed.protocol === "https:",
   trustProxy: process.env.TRUST_PROXY === "loopback" ? "loopback" : false,
 });
-const server = app.listen(port, "127.0.0.1", () =>
-  console.log(`Cười Đã: ${origin} (local bind 127.0.0.1:${port})`),
-);
+const server = app.listen(port, "127.0.0.1", () => {
+  console.log(`Cười Đã: ${origin} (local bind 127.0.0.1:${port})`);
+  process.send?.("ready");
+});
 server.requestTimeout = 60000;
 server.headersTimeout = 15000;
 function cleanup() {
   try {
     db.close();
   } finally {
-    closeSync(lockFd);
-    unlinkSync(lock);
+    releaseLock();
   }
 }
 server.on("error", (e) => {
@@ -79,3 +69,6 @@ function stop() {
 }
 process.on("SIGINT", stop);
 process.on("SIGTERM", stop);
+process.on("message", (message) => {
+  if (message === "shutdown") stop();
+});

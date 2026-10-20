@@ -3,12 +3,10 @@ import {
   existsSync,
   cpSync,
   mkdirSync,
-  openSync,
-  closeSync,
-  unlinkSync,
   realpathSync,
 } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { acquireProcessLock } from "../server/process-lock.mjs";
 export function backup(source, target) {
   source = realpathSync(source);
   target = resolve(target);
@@ -21,13 +19,7 @@ export function backup(source, target) {
     throw Error("Backup must be outside the live data directory.");
   if (!existsSync(join(source, "community.sqlite")))
     throw Error("Missing database.");
-  const lock = join(source, "server.lock");
-  let fd;
-  try {
-    fd = openSync(lock, "wx");
-  } catch {
-    throw Error("Stop the server before backup. Data directory is locked.");
-  }
+  const releaseLock = acquireProcessLock(source);
   try {
     mkdirSync(target);
     for (const name of [
@@ -43,8 +35,7 @@ export function backup(source, target) {
           force: false,
         });
   } finally {
-    closeSync(fd);
-    unlinkSync(lock);
+    releaseLock();
   }
   return target;
 }
